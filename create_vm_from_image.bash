@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Your specific Variables
-IMAGE_DIR=/home/${HOME}/VirtualMachines/
+IMAGE_DIR=${HOME}/VirtualMachines/
 ROOT_PASSWORD='changeme'
 DOMAIN='client.example.com'
 NETWORK='sat6'
@@ -28,10 +28,17 @@ case ${OS_VERSION} in
   8)
     SOURCE_IMAGE=${IMAGE_DIR}rhel-8.10-x86_64-kvm.qcow2
     OS_INFO="rhel8.10"
+    NIC="eth0"
     ;;
   9)
-    SOURCE_IMAGE=${IMAGE_DIR}rhel-9.4-x86_64-kvm.qcow2
-    OS_INFO="rhel9.4"
+    SOURCE_IMAGE=${IMAGE_DIR}rhel-9.6-x86_64-kvm.qcow2
+    OS_INFO="rhel9-unknown"
+    NIC="eth0"
+    ;;
+  10)
+    SOURCE_IMAGE=${IMAGE_DIR}rhel-10.0-x86_64-kvm.qcow2
+    OS_INFO="rhel10.0"
+    NIC="enp1s0"
     ;;
   *)
     echo Invalid OS Version for first argument.
@@ -75,7 +82,7 @@ virt-install ${LIBVIRT_CONNECT} \
 IP=""
 while [[ XXX${IP}XXX == "XXXXXX" ]] ; do
   sleep 5
-  IP=$(virsh ${LIBVIRT_CONNECT} domifaddr ${VM_NAME} eth0 --source agent 2> /dev/null | grep ipv4 | tr -s " " | cut -d" " -f5 |cut -d/ -f1)
+  IP=$(virsh ${LIBVIRT_CONNECT} domifaddr ${VM_NAME} ${NIC} --source agent 2> /dev/null | grep ipv4 | tr -s " " | cut -d" " -f5 |cut -d/ -f1)
 done
 
 ${SSH_CMD}${IP} "useradd ${ADMIN_USER}"

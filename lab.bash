@@ -7,7 +7,7 @@ VIRSH_CMD="virsh -c qemu:///system"
 VM_LIST=$(${VIRSH_CMD} list --all --name)
 
 # Infrastructure List
-VM_INFRA_LIST=("sat6.example.com" "PAH" "AAP")
+VM_INFRA_LIST=("sat6.example.com" "aap26")
 
 # Do Not Start List 
 VM_NO_START_LIST=("captest.test.org" "rhde" "rhdeserial" "sattest.test.org" "uefi")
@@ -59,9 +59,20 @@ stop_lab () {
     fi
   done
 
-  ssh root@aap 'automation-controller-service stop && systemctl poweroff'
-  ssh root@pah 'systemctl stop pulpcore-api.service pulpcore-content.service pulpcore-worker@1.service pulpcore-worker@2.service pulpcore.service nginx.service redis.service && systemctl poweroff'
-  ssh root@sat6 'satellite-maintain service stop && systemctl poweroff'
+  ${VIRSH_CMD} domstate aap26 | grep running &> /dev/null
+  if [ ${?} -eq 0 ] ; then
+    ssh ansible@aap26 << '___EOF___'
+podman ps --format '{{.Names}}' | sort | xargs -i systemctl --user stop {}
+sudo systemctl poweroff
+___EOF___
+  fi
+
+  ${VIRSH_CMD} domstate sat6.example.com | grep running &> /dev/null
+  if [ ${?} -eq 0 ] ; then
+    ssh root@sat6 'satellite-maintain service stop && systemctl poweroff'
+  fi
+
+}
 
 case ${1} in
   start)
