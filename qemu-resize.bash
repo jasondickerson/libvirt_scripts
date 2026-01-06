@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$#" -ne 2 ] ; then
+  echo "Usage:  ${0} FILENAME [+ | -]SIZE"
+  exit
+fi
+
 qemu-img resize ${1} ${2}
 echo 'Boot and run the following for RHEL <=9 :'
 echo growpart /dev/vda 4
@@ -8,3 +13,4 @@ echo 'Boot and run the following for RHEL 10 :'
 echo growpart /dev/vda 3
 echo xfs_growfs /dev/vda3
 echo
+
