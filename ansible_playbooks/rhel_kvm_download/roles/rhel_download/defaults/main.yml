@@ -1,0 +1,10 @@
+---
+rhel_download_image_version: "9.7"
+rhel_download_arch: x86_64
+rhel_download_token_url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+rhel_download_images_url: "https://api.access.redhat.com/management/v1/images/rhel/{{ rhel_download_image_version }}/{{ rhel_download_arch }}"
+rhel_download_dest_dir: "{{ rhel_download_working_dir | default('/var/tmp') }}"
+# types: boot, dvd, kvm, wsl2, rt
+rhel_download_type: boot
+...
+

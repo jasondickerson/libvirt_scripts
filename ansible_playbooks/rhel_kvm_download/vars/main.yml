@@ -1,0 +1,11 @@
+---
+# From https://access.redhat.com/management/api
+rhel_download_offline_token: ''
+rhel_versions:
+  - "9.7"
+  - "10.1"
+rhel_download_type: kvm
+rhel_download_dest_dir: /home/my_user/VirtualMachines
+rhel_download_arch: x86_64
+...
+
